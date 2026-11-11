@@ -288,12 +288,12 @@ class ServiceAdminDetailAPI(GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ServicePlanAdminListCreateAPI(GenericAPIView):
-    queryset = serializers.ServicePlan.objects.all()
+    queryset = models.ServicePlan.objects.all()
     serializer_class = serializers.ServicePlanAdminSerializer
     permission_classes = [IsAdminUser]
 
     def get_queryset(self):
-        queryset = serializers.ServicePlan.objects.select_related("service")
+        queryset = models.ServicePlan.objects.select_related("service")
 
         service_id = self.request.query_params.get("service")
 
@@ -321,7 +321,7 @@ class ServicePlanAdminListCreateAPI(GenericAPIView):
 
 
 class ServicePlanAdminDetailAPI(GenericAPIView):
-    queryset = serializers.ServicePlan.objects.all()
+    queryset = models.ServicePlan.objects.all()
     serializer_class = serializers.ServicePlanAdminSerializer
     permission_classes = [IsAdminUser]
 
