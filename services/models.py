@@ -7,7 +7,7 @@ class Category(models.Model):
     name = models.CharField(max_length=250)
 
     slug = models.SlugField(
-        max_length=170,
+        max_length=250,
         unique=True,
         allow_unicode=True,
         blank=True
@@ -52,12 +52,13 @@ class Service(models.Model):
         related_name='services'
     )
 
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=250)
 
     slug = models.SlugField(
         max_length=250,
         unique=True,
-        allow_unicode=True
+        allow_unicode=True,
+        blank=True
     )
 
     short_description = models.CharField(
@@ -81,6 +82,20 @@ class Service(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title, allow_unicode=True) or 'service'
+            self.slug = base_slug
+
+            counter = 1
+            while Service.objects.filter(
+                slug=self.slug
+            ).exclude(pk=self.pk).exists():
+                self.slug = f'{base_slug}-{counter}'
+                counter += 1
+
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['id']
