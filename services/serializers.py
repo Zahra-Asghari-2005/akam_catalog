@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from .models import ConsultationRequest
 from . import models
 
 
@@ -144,16 +143,18 @@ class ConsultationRequestSerializer(serializers.ModelSerializer):
 
     service_name = serializers.CharField(
         source="service.title",
-        read_only=True
+        read_only=True,
+        allow_null = True
     )
 
     plan_name = serializers.CharField(
         source="plan.name",
-        read_only=True
+        read_only=True,
+        allow_null = True
     )
 
     class Meta:
-        model = ConsultationRequest
+        model = models.ConsultationRequest
 
         fields = [
             "id",
@@ -200,7 +201,7 @@ class ConsultationRequestSerializer(serializers.ModelSerializer):
 class ConsultationStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = ConsultationRequest
+        model = models.ConsultationRequest
         fields = ["status"]
 
 class ServiceAdminSerializer(serializers.ModelSerializer):
@@ -281,16 +282,7 @@ class PlanFeatureAdminSerializer(serializers.ModelSerializer):
 
         return attrs
 
-    def validate(self, attrs):
-        plan = attrs.get("plan", getattr(self.instance, "plan", None))
-        feature = attrs.get("feature", getattr(self.instance, "feature", None))
 
-        if plan and feature and plan.service_id != feature.service_id:
-            raise serializers.ValidationError(
-                "این ویژگی متعلق به خدمت انتخاب‌شده برای پلن نیست."
-            )
-
-        return attrs
 
 class ServiceFeatureAdminSerializer(serializers.ModelSerializer):
     class Meta:
